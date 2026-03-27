@@ -14,6 +14,7 @@ export function Hero() {
   const { content } = usePortfolioContent();
   const { contactSection, hero, resumeSection } = content;
   const resolvedResumeUrl = useResolvedAssetUrl(resumeSection.pdfUrl);
+  const resolvedPhotoUrl = useResolvedAssetUrl(hero.photoUrl);
   const primaryHref = resolvedResumeUrl || "#resume";
   const primaryTarget =
     resolvedResumeUrl &&
@@ -112,9 +113,9 @@ export function Hero() {
         >
           <div className="relative w-full overflow-hidden rounded-[2rem] border border-background/80 bg-background/76 p-4 shadow-dashboard transition-all duration-300 hover:backdrop-blur-xl">
             <div className="aspect-[4/5] overflow-hidden rounded-[1.5rem] border border-dashed border-border bg-secondary/55">
-              {hero.photoUrl ? (
+              {resolvedPhotoUrl ? (
                 <img
-                  src={hero.photoUrl}
+                  src={resolvedPhotoUrl}
                   alt={hero.photoTitle}
                   className="h-full w-full object-cover"
                 />
@@ -133,17 +134,6 @@ export function Hero() {
                   </div>
                 </div>
               )}
-            </div>
-            <div className="pointer-events-none absolute inset-x-4 bottom-4 flex items-center justify-between rounded-2xl border border-background/90 bg-background/88 px-4 py-3">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  {hero.quickIntroLabel}
-                </p>
-                <p className="mt-1 text-sm font-medium text-foreground">
-                  {hero.quickIntroText}
-                </p>
-              </div>
-              <ArrowDownRight className="h-5 w-5 text-accent" />
             </div>
           </div>
         </motion.div>
