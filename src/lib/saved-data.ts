@@ -6,7 +6,7 @@ export const savedData = {
     },
     {
       "id": "skills",
-      "label": "Skills"
+      "label": "Skill"
     },
     {
       "id": "projects",

@@ -56,10 +56,26 @@ const vite = await createViteServer({
   appType: "spa",
   server: {
     middlewareMode: true,
-    // Pass the httpServer so Vite 8 handles HMR WebSocket upgrades internally
-    ws: false,
+    // Do NOT pass hmr.server here – we forward upgrade events manually below
   },
 });
+
+// Forward WebSocket upgrade requests to Vite's internal HMR WebSocket server
+httpServer.on("upgrade", (req, socket, head) => {
+  // Vite 8 exposes its WebSocket server on vite.hot.wss (internal)
+  const wss =
+    // @ts-ignore – internal API, stable across minor versions
+    vite.hot?.wss ?? vite._wss ?? null;
+
+  if (wss) {
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit("connection", ws, req);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
 
 httpServer.on("request", async (req, res) => {
   const requestUrl = new URL(req.url ?? "/", `http://${host}:${port}`);
