@@ -35,7 +35,7 @@ export const savedData = {
   ],
   "hero": {
     "badge": "Portfolio Layout",
-    "name": "Lokananda",
+    "name": "Lokanandaiefiwbgviigvrbg",
     "title": "Machine Learning Engineer | Full Stack Developer | Designer",
     "about": "I’m Lokananda, a Machine Learning–focused developer building intelligent, real-world applications. I also work with full stack technologies to create seamless, interactive user experiences, combining ML with modern web development while seeking internships and collaborations",
     "primaryCta": "View Resume",
@@ -214,13 +214,13 @@ export const savedData = {
     "items": [
       {
         "label": "Email",
-        "value": "lokanandareddy9@gmail.com",
-        "url": "mailto:lokanandareddy9@gmail.com"
+        "value": "lokanandareddy9",
+        "url": "https://mail.google.com/mail/?view=cm&fs=1&to=lokanandareddy9@gmail.com"
       },
       {
         "label": "Phone",
         "value": "+91 8341775996",
-        "url": "tel:+918341775996"
+        "url": "mailto:, tel:, or https://"
       },
       {
         "label": "GitHub",
@@ -230,14 +230,14 @@ export const savedData = {
       {
         "label": "LinkedIn",
         "value": "lokananda",
-        "url": "https://linkedin.com/in/lokananda"
+        "url": "https://www.linkedin.com/in/lokananda/"
       }
     ],
     "panelTitle": "Ready to personalize this section",
     "panelDescription": "Replace these placeholders with your real email, phone number, GitHub, LinkedIn, or any other preferred contact method. This section is intentionally static and does not include a backend form.",
     "primaryLabel": "Email Me",
-    "primaryHref": "",
+    "primaryHref": "https://mail.google.com/mail/?view=cm&fs=1&to=lokanandareddy9@gmail.com",
     "secondaryLabel": "GitHub Profile",
-    "secondaryHref": ""
+    "secondaryHref": "https://github.com/lokananda9"
   }
 };

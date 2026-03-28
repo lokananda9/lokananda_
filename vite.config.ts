@@ -21,9 +21,10 @@ export default defineConfig({
               fs.mkdirSync(publicPath, { recursive: true });
             }
             const filePath = path.resolve(publicPath, fileName);
-            const writeStream = fs.createWriteStream(filePath);
-            req.pipe(writeStream);
+            const chunks: any[] = [];
+            req.on('data', (chunk: any) => chunks.push(chunk));
             req.on('end', () => {
+              fs.writeFileSync(filePath, Buffer.concat(chunks));
               res.writeHead(200, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ url: `/uploads/${fileName}` }));
             });
