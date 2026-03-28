@@ -146,7 +146,11 @@ export const createContactItem = () => ({
   url: "",
 });
 
-export const defaultPortfolioContent: PortfolioContent = {
+import { savedData } from "./saved-data";
+
+export const defaultPortfolioContent: PortfolioContent = Object.keys(savedData).length > 0 
+  ? (savedData as unknown as PortfolioContent) 
+  : {
   navItems: [
     { id: "about", label: "About Me" },
     { id: "skills", label: "Skills" },

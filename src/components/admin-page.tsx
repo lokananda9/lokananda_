@@ -1,8 +1,9 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   FileText,
   Plus,
   RotateCcw,
+  Save,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -258,6 +259,24 @@ function AssetField({
 export function AdminPage() {
   const { content, updateField, addItem, removeItem, resetContent } =
     usePortfolioContent();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveToCodebase = async () => {
+    try {
+      setIsSaving(true);
+      const res = await fetch('/api/save-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(content)
+      });
+      if (!res.ok) throw new Error('Save failed');
+      window.alert('Content successfully saved to codebase!');
+    } catch (e) {
+      window.alert('Failed to save to codebase. Is the dev server running?');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleAssetUpload = async (path: string, file: File) => {
     try {
@@ -296,6 +315,15 @@ export function AdminPage() {
                   <FileText className="mr-2 h-4 w-4" />
                   Back To Portfolio
                 </a>
+              </Button>
+              <Button 
+                variant="default" 
+                className="px-5 bg-green-600 hover:bg-green-700 text-white" 
+                onClick={handleSaveToCodebase}
+                disabled={isSaving}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {isSaving ? "Saving..." : "Save to Codebase"}
               </Button>
               <Button variant="secondary" className="px-5" onClick={resetContent}>
                 <RotateCcw className="mr-2 h-4 w-4" />
