@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowDownRight, ImagePlus, Mail, FileText } from "lucide-react";
-import { useResolvedAssetUrl } from "../lib/asset-store";
 import { usePortfolioContent } from "../lib/content-store";
+import { getRenderableUrl, shouldOpenInNewTab } from "../lib/url-utils";
 import { Button } from "./ui/button";
 
 const reveal = (y: number, duration: number, delay = 0) => ({
@@ -13,18 +13,12 @@ const reveal = (y: number, duration: number, delay = 0) => ({
 export function Hero() {
   const { content } = usePortfolioContent();
   const { contactSection, hero, resumeSection } = content;
-  const resolvedResumeUrl = useResolvedAssetUrl(resumeSection.pdfUrl);
-  const resolvedPhotoUrl = useResolvedAssetUrl(hero.photoUrl);
-  const primaryHref = resolvedResumeUrl || "#resume";
-  const primaryTarget =
-    resolvedResumeUrl &&
-    (resolvedResumeUrl.startsWith("http") ||
-      resolvedResumeUrl.startsWith("blob:") ||
-      resolvedResumeUrl.startsWith("data:"))
-      ? "_blank"
-      : undefined;
-  const secondaryHref = contactSection.primaryHref || "#contact";
-  const secondaryTarget = secondaryHref.startsWith("http") ? "_blank" : undefined;
+  const resumeUrl = getRenderableUrl(resumeSection.pdfUrl);
+  const photoUrl = getRenderableUrl(hero.photoUrl);
+  const primaryHref = resumeUrl || "#resume";
+  const primaryTarget = shouldOpenInNewTab(resumeUrl) ? "_blank" : undefined;
+  const secondaryHref = getRenderableUrl(contactSection.primaryHref) || "#contact";
+  const secondaryTarget = shouldOpenInNewTab(secondaryHref) ? "_blank" : undefined;
 
   return (
     <section
@@ -113,9 +107,9 @@ export function Hero() {
         >
           <div className="relative w-full overflow-hidden rounded-[2rem] border border-background/80 bg-background/76 p-4 shadow-dashboard transition-all duration-300 hover:backdrop-blur-xl">
             <div className="aspect-[4/5] overflow-hidden rounded-[1.5rem] border border-dashed border-border bg-secondary/55">
-              {resolvedPhotoUrl ? (
+              {photoUrl ? (
                 <img
-                  src={resolvedPhotoUrl}
+                  src={photoUrl}
                   alt={hero.photoTitle}
                   className="h-full w-full object-cover"
                 />

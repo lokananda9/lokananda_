@@ -12,8 +12,8 @@ import {
   Trophy,
   UserRound,
 } from "lucide-react";
-import { useResolvedAssetUrl } from "../lib/asset-store";
 import { usePortfolioContent } from "../lib/content-store";
+import { getRenderableUrl, shouldOpenInNewTab } from "../lib/url-utils";
 import { Button } from "./ui/button";
 
 const sectionReveal = {
@@ -85,7 +85,7 @@ function ActionButton({
   variant?: "default" | "outline";
   download?: boolean;
 }) {
-  const resolvedHref = useResolvedAssetUrl(href);
+  const resolvedHref = getRenderableUrl(href);
 
   if (!resolvedHref) {
     return (
@@ -96,18 +96,14 @@ function ActionButton({
     );
   }
 
-  const shouldOpenInNewTab =
-    !download &&
-    (resolvedHref.startsWith("http") ||
-      resolvedHref.startsWith("blob:") ||
-      resolvedHref.startsWith("data:"));
+  const openInNewTab = shouldOpenInNewTab(resolvedHref, download);
 
   return (
     <Button asChild variant={variant} className="px-4">
       <a
         href={resolvedHref}
-        target={shouldOpenInNewTab ? "_blank" : undefined}
-        rel={shouldOpenInNewTab ? "noreferrer" : undefined}
+        target={openInNewTab ? "_blank" : undefined}
+        rel={openInNewTab ? "noreferrer" : undefined}
         download={download ? true : undefined}
       >
         {icon}
@@ -126,7 +122,7 @@ function AssetPreview({
   label: string;
   icon: ReactNode;
 }) {
-  const resolvedUrl = useResolvedAssetUrl(reference);
+  const resolvedUrl = getRenderableUrl(reference);
 
   if (!resolvedUrl) {
     return <PlaceholderFrame label={label} icon={icon} />;
@@ -150,11 +146,8 @@ function ContactValue({
   value: string;
   href: string;
 }) {
-  const resolvedHref = useResolvedAssetUrl(href);
-  const shouldOpenInNewTab =
-    resolvedHref.startsWith("http") ||
-    resolvedHref.startsWith("blob:") ||
-    resolvedHref.startsWith("data:");
+  const resolvedHref = getRenderableUrl(href);
+  const openInNewTab = shouldOpenInNewTab(resolvedHref);
 
   if (!resolvedHref) {
     return <p className="mt-2 text-sm font-medium text-foreground">{value}</p>;
@@ -163,8 +156,8 @@ function ContactValue({
   return (
     <a
       href={resolvedHref}
-      target={shouldOpenInNewTab ? "_blank" : undefined}
-      rel={shouldOpenInNewTab ? "noreferrer" : undefined}
+      target={openInNewTab ? "_blank" : undefined}
+      rel={openInNewTab ? "noreferrer" : undefined}
       className="mt-2 block text-sm font-medium text-foreground transition-colors hover:text-accent"
     >
       {value}

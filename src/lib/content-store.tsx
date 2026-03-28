@@ -1,16 +1,20 @@
 import {
   createContext,
   useContext,
-  useEffect,
+  useMemo,
   useState,
   type PropsWithChildren,
 } from "react";
+import {
+  isLocalAdminEnabled,
+  savePortfolioContent,
+} from "./admin-api";
 import {
   defaultPortfolioContent,
   type PortfolioContent,
 } from "./site-data";
 
-const STORAGE_KEY = "portfolio-admin-content-v1";
+type SaveState = "idle" | "saving" | "saved" | "error";
 
 type ContentContextValue = {
   content: PortfolioContent;
@@ -18,48 +22,14 @@ type ContentContextValue = {
   addItem: (path: string, item: unknown) => void;
   removeItem: (path: string, index: number) => void;
   resetContent: () => void;
+  saveContent: () => Promise<boolean>;
+  hasUnsavedChanges: boolean;
+  saveState: SaveState;
+  saveMessage: string;
+  localAdminEnabled: boolean;
 };
 
 const ContentContext = createContext<ContentContextValue | undefined>(undefined);
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function mergeWithDefaults<T>(defaults: T, stored: unknown): T {
-  if (Array.isArray(defaults)) {
-    if (!Array.isArray(stored)) {
-      return defaults;
-    }
-
-    if (defaults.length === 0) {
-      return stored as T;
-    }
-
-    return stored.map((item, index) =>
-      mergeWithDefaults(defaults[index] ?? defaults[0], item),
-    ) as T;
-  }
-
-  if (isRecord(defaults)) {
-    if (!isRecord(stored)) {
-      return defaults;
-    }
-
-    const result: Record<string, unknown> = {};
-
-    for (const key of Object.keys(defaults)) {
-      result[key] = mergeWithDefaults(
-        defaults[key as keyof typeof defaults],
-        stored[key],
-      );
-    }
-
-    return result as T;
-  }
-
-  return typeof stored === typeof defaults ? (stored as T) : defaults;
-}
 
 function setByPath<T>(source: T, path: string, value: string): T {
   const clone = structuredClone(source) as Record<string, unknown>;
@@ -103,33 +73,33 @@ function updateArrayByPath<T>(
   return clone as T;
 }
 
-function readStoredContent(): PortfolioContent {
-  if (typeof window === "undefined") {
-    return structuredClone(defaultPortfolioContent);
-  }
-
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-
-    if (!raw) {
-      return structuredClone(defaultPortfolioContent);
-    }
-
-    return mergeWithDefaults(defaultPortfolioContent, JSON.parse(raw));
-  } catch {
-    return structuredClone(defaultPortfolioContent);
-  }
+function createInitialContent() {
+  return structuredClone(defaultPortfolioContent);
 }
 
 export function PortfolioContentProvider({ children }: PropsWithChildren) {
-  const [content, setContent] = useState<PortfolioContent>(() => readStoredContent());
+  const localAdminEnabled = isLocalAdminEnabled();
+  const [savedContent, setSavedContent] = useState<PortfolioContent>(() =>
+    createInitialContent(),
+  );
+  const [content, setContent] = useState<PortfolioContent>(() =>
+    createInitialContent(),
+  );
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [saveMessage, setSaveMessage] = useState(
+    localAdminEnabled
+      ? "Edit locally, then save to update repo files before pushing to Git."
+      : "Rendering committed portfolio content.",
+  );
 
-  useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
-  }, [content]);
+  const savedSnapshot = useMemo(() => JSON.stringify(savedContent), [savedContent]);
+  const contentSnapshot = useMemo(() => JSON.stringify(content), [content]);
+  const hasUnsavedChanges = savedSnapshot !== contentSnapshot;
 
   const updateField = (path: string, value: string) => {
     setContent((current) => setByPath(current, path, value));
+    setSaveState("idle");
+    setSaveMessage("Unsaved local changes.");
   };
 
   const addItem = (path: string, item: unknown) => {
@@ -139,6 +109,8 @@ export function PortfolioContentProvider({ children }: PropsWithChildren) {
         structuredClone(item),
       ]),
     );
+    setSaveState("idle");
+    setSaveMessage("Unsaved local changes.");
   };
 
   const removeItem = (path: string, index: number) => {
@@ -147,15 +119,58 @@ export function PortfolioContentProvider({ children }: PropsWithChildren) {
         items.filter((_, itemIndex) => itemIndex !== index),
       ),
     );
+    setSaveState("idle");
+    setSaveMessage("Unsaved local changes.");
   };
 
   const resetContent = () => {
-    setContent(structuredClone(defaultPortfolioContent));
+    setContent(structuredClone(savedContent));
+    setSaveState("idle");
+    setSaveMessage("Reverted to the last saved file content.");
+  };
+
+  const saveContent = async () => {
+    if (!localAdminEnabled) {
+      setSaveState("error");
+      setSaveMessage("Saving is available only while running locally with npm run dev.");
+      return false;
+    }
+
+    setSaveState("saving");
+    setSaveMessage("Saving changes to repo files...");
+
+    try {
+      await savePortfolioContent(content);
+      const nextSaved = structuredClone(content);
+      setSavedContent(nextSaved);
+      setSaveState("saved");
+      setSaveMessage(
+        "Saved to src/lib/saved-data.ts. Commit the changed files and push to update Vercel.",
+      );
+      return true;
+    } catch (error) {
+      setSaveState("error");
+      setSaveMessage(
+        error instanceof Error ? error.message : "Could not save the content file.",
+      );
+      return false;
+    }
   };
 
   return (
     <ContentContext.Provider
-      value={{ content, updateField, addItem, removeItem, resetContent }}
+      value={{
+        content,
+        updateField,
+        addItem,
+        removeItem,
+        resetContent,
+        saveContent,
+        hasUnsavedChanges,
+        saveState,
+        saveMessage,
+        localAdminEnabled,
+      }}
     >
       {children}
     </ContentContext.Provider>

@@ -1,3 +1,5 @@
+import { savedData } from "./saved-data";
+
 export type PortfolioContent = {
   navItems: Array<{
     id: string;
@@ -146,11 +148,7 @@ export const createContactItem = () => ({
   url: "",
 });
 
-import { savedData } from "./saved-data";
-
-export const defaultPortfolioContent: PortfolioContent = Object.keys(savedData).length > 0 
-  ? (savedData as unknown as PortfolioContent) 
-  : {
+export const starterPortfolioContent: PortfolioContent = {
   navItems: [
     { id: "about", label: "About Me" },
     { id: "skills", label: "Skills" },
@@ -317,3 +315,80 @@ export const defaultPortfolioContent: PortfolioContent = Object.keys(savedData).
     secondaryHref: "",
   },
 };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function mergePortfolioContent<T>(defaults: T, incoming: unknown): T {
+  if (Array.isArray(defaults)) {
+    if (!Array.isArray(incoming)) {
+      return defaults;
+    }
+
+    if (defaults.length === 0) {
+      return incoming as T;
+    }
+
+    return incoming.map((item, index) =>
+      mergePortfolioContent(defaults[index] ?? defaults[0], item),
+    ) as T;
+  }
+
+  if (isRecord(defaults)) {
+    if (!isRecord(incoming)) {
+      return defaults;
+    }
+
+    const result: Record<string, unknown> = {};
+
+    for (const key of Object.keys(defaults)) {
+      result[key] = mergePortfolioContent(
+        defaults[key as keyof typeof defaults],
+        incoming[key],
+      );
+    }
+
+    return result as T;
+  }
+
+  return typeof incoming === typeof defaults ? (incoming as T) : defaults;
+}
+
+function cleanPersistedUrl(value: string) {
+  return value.startsWith("asset:") ? "" : value;
+}
+
+function normalizePortfolioContent(content: PortfolioContent): PortfolioContent {
+  return {
+    ...content,
+    hero: {
+      ...content.hero,
+      photoUrl: cleanPersistedUrl(content.hero.photoUrl),
+    },
+    projectsSection: {
+      ...content.projectsSection,
+      items: content.projectsSection.items.map((item) => ({
+        ...item,
+        imageUrl: cleanPersistedUrl(item.imageUrl),
+      })),
+    },
+    certificatesSection: {
+      ...content.certificatesSection,
+      items: content.certificatesSection.items.map((item) => ({
+        ...item,
+        imageUrl: cleanPersistedUrl(item.imageUrl),
+        pdfUrl: cleanPersistedUrl(item.pdfUrl),
+      })),
+    },
+    resumeSection: {
+      ...content.resumeSection,
+      previewImageUrl: cleanPersistedUrl(content.resumeSection.previewImageUrl),
+      pdfUrl: cleanPersistedUrl(content.resumeSection.pdfUrl),
+    },
+  };
+}
+
+export const defaultPortfolioContent: PortfolioContent = normalizePortfolioContent(
+  mergePortfolioContent(starterPortfolioContent, savedData),
+);

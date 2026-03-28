@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   FileText,
   Plus,
@@ -8,10 +8,8 @@ import {
   Upload,
 } from "lucide-react";
 import {
-  isAssetReference,
-  saveAssetFile,
-  useResolvedAssetUrl,
-} from "../lib/asset-store";
+  uploadPortfolioAsset,
+} from "../lib/admin-api";
 import { usePortfolioContent } from "../lib/content-store";
 import {
   createAchievementItem,
@@ -177,9 +175,6 @@ function AssetField({
   onChange: (value: string) => void;
   onUpload: (file: File) => Promise<void>;
 }) {
-  const resolvedUrl = useResolvedAssetUrl(value);
-  const usesUploadedFile = isAssetReference(value);
-
   return (
     <div className="grid gap-3 rounded-[1.5rem] border border-border bg-background/90 p-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -200,7 +195,7 @@ function AssetField({
       <AdminField
         label="Direct URL"
         type="url"
-        value={usesUploadedFile ? "" : value}
+        value={value}
         placeholder={
           kind === "image"
             ? "Paste an image URL"
@@ -229,24 +224,23 @@ function AssetField({
       </label>
 
       <p className="text-xs leading-relaxed text-muted-foreground">
-        {usesUploadedFile
-          ? "Using a file uploaded in this browser. Paste a direct URL above any time to replace it."
-          : "You can paste a public URL or upload a local file here."}
+        Upload files locally into <code>public/uploads</code>, then save your
+        content so the repo tracks those URLs for Vercel.
       </p>
 
-      {kind === "image" && resolvedUrl ? (
+      {kind === "image" && value ? (
         <div className="overflow-hidden rounded-[1.25rem] border border-border bg-secondary/40">
           <img
-            src={resolvedUrl}
+            src={value}
             alt={label}
             className="h-40 w-full object-cover"
           />
         </div>
       ) : null}
 
-      {kind === "document" && resolvedUrl ? (
+      {kind === "document" && value ? (
         <Button asChild variant="outline" className="justify-start px-4">
-          <a href={resolvedUrl} target="_blank" rel="noreferrer">
+          <a href={value} target="_blank" rel="noreferrer">
             <Upload className="mr-2 h-4 w-4" />
             Open Current File
           </a>
@@ -257,41 +251,26 @@ function AssetField({
 }
 
 export function AdminPage() {
-  const { content, updateField, addItem, removeItem, resetContent } =
-    usePortfolioContent();
-  const [isSaving, setIsSaving] = useState(false);
-
-  const handleSaveToCodebase = async () => {
-    try {
-      setIsSaving(true);
-      
-      // Prevent making requests to local-only API in production (avoids 405 error)
-      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        window.alert('Saving to your codebase is only supported when running the local dev server. On the live site, changes apply temporarily for testing!');
-        return;
-      }
-
-      const res = await fetch('/api/save-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(content)
-      });
-      if (!res.ok) throw new Error('Save failed');
-      window.alert('Content successfully saved to codebase!');
-    } catch (e) {
-      window.alert('Failed to save to codebase. Is the dev server running?');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const {
+    content,
+    updateField,
+    addItem,
+    removeItem,
+    resetContent,
+    saveContent,
+    hasUnsavedChanges,
+    saveState,
+    saveMessage,
+    localAdminEnabled,
+  } = usePortfolioContent();
 
   const handleAssetUpload = async (path: string, file: File) => {
     try {
-      const assetReference = await saveAssetFile(file);
-      updateField(path, assetReference);
+      const uploadedUrl = await uploadPortfolioAsset(file);
+      updateField(path, uploadedUrl);
     } catch {
       window.alert(
-        "This file could not be saved. Please try again or paste a direct URL instead.",
+        "This file could not be uploaded. Please try again or paste a direct URL instead.",
       );
     }
   };
@@ -309,10 +288,12 @@ export function AdminPage() {
                 Manage every word, link, image, and PDF
               </h1>
               <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                Changes save automatically in this browser. You can now add new
-                skills, projects, certificates, achievements, education
-                records, contact cards, and upload portfolio assets directly
-                from this editor.
+                Edit locally, upload files into the repo, then save the content
+                file before committing and pushing. The deployed Vercel site
+                reads only the committed files and does not expose this editor.
+              </p>
+              <p className="mt-3 text-sm font-medium text-foreground/80">
+                {saveMessage}
               </p>
             </div>
 
@@ -323,18 +304,20 @@ export function AdminPage() {
                   Back To Portfolio
                 </a>
               </Button>
-              <Button 
-                variant="default" 
-                className="px-5 bg-green-600 hover:bg-green-700 text-white" 
-                onClick={handleSaveToCodebase}
-                disabled={isSaving}
+              <Button
+                variant="default"
+                className="px-5"
+                onClick={() => {
+                  void saveContent();
+                }}
+                disabled={!localAdminEnabled || !hasUnsavedChanges || saveState === "saving"}
               >
                 <Save className="mr-2 h-4 w-4" />
-                {isSaving ? "Saving..." : "Save to Codebase"}
+                {saveState === "saving" ? "Saving..." : "Save Changes"}
               </Button>
               <Button variant="secondary" className="px-5" onClick={resetContent}>
                 <RotateCcw className="mr-2 h-4 w-4" />
-                Reset Content
+                Reset Unsaved Changes
               </Button>
             </div>
           </div>

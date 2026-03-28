@@ -1,19 +1,13 @@
 import { Button } from "./ui/button";
-import { useResolvedAssetUrl } from "../lib/asset-store";
 import { usePortfolioContent } from "../lib/content-store";
+import { getRenderableUrl, shouldOpenInNewTab } from "../lib/url-utils";
 
 export function Navbar() {
   const { content } = usePortfolioContent();
   const { navItems, hero, resumeSection } = content;
-  const resolvedResumeUrl = useResolvedAssetUrl(resumeSection.pdfUrl);
-  const primaryHref = resolvedResumeUrl || "#resume";
-  const primaryTarget =
-    resolvedResumeUrl &&
-    (resolvedResumeUrl.startsWith("http") ||
-      resolvedResumeUrl.startsWith("blob:") ||
-      resolvedResumeUrl.startsWith("data:"))
-      ? "_blank"
-      : undefined;
+  const resumeUrl = getRenderableUrl(resumeSection.pdfUrl);
+  const primaryHref = resumeUrl || "#resume";
+  const primaryTarget = shouldOpenInNewTab(resumeUrl) ? "_blank" : undefined;
 
   return (
     <header className="sticky top-0 z-30">

@@ -42,7 +42,7 @@ export const savedData = {
     "secondaryCta": "Contact Me",
     "photoTitle": "Professional Picture",
     "photoDescription": "Replace this polished placeholder with your portfolio photo.",
-    "photoUrl": "asset:fb6aaa84-dcd5-4571-a602-26119ab198cf",
+    "photoUrl": "",
     "quickIntroLabel": "Quick Intro",
     "quickIntroText": "About me, skills, projects, certificates, and more",
     "highlights": [
@@ -220,7 +220,7 @@ export const savedData = {
       {
         "label": "Phone",
         "value": "+91 8341775996",
-        "url": "mailto:, tel:, or https://"
+        "url": "tel:+918341775996"
       },
       {
         "label": "GitHub",
