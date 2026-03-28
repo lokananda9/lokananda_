@@ -264,6 +264,13 @@ export function AdminPage() {
   const handleSaveToCodebase = async () => {
     try {
       setIsSaving(true);
+      
+      // Prevent making requests to local-only API in production (avoids 405 error)
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        window.alert('Saving to your codebase is only supported when running the local dev server. On the live site, changes apply temporarily for testing!');
+        return;
+      }
+
       const res = await fetch('/api/save-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
