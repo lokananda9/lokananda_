@@ -56,7 +56,7 @@ export const savedData = {
       },
       {
         "label": "Open To",
-        "value": "Internships, freelance work and collaborations"
+        "value": "Internships, jobs, freelance work, and collaborations"
       }
     ]
   },
@@ -150,22 +150,22 @@ export const savedData = {
     "items": [
       {
         "previewLabel": "Certificate Preview",
-        "title": "Certificate Title",
-        "details": "Add the certificate issuer, date, and one short detail here.",
+        "title": "Prompt Engineering",
+        "details": "Prompt engineering in Large Language Models (LLMs) like ChatGPT, Gemini, and Claude.",
         "imageUrl": "",
         "pdfUrl": ""
       },
       {
         "previewLabel": "Certificate Preview",
-        "title": "Certificate Title",
-        "details": "Use this slot for another certificate or course completion.",
+        "title": "Responsive Web Design",
+        "details": "Responsive web design (RWD) uses HTML, CSS, and some JavaScript to create web pages.",
         "imageUrl": "",
         "pdfUrl": ""
       },
       {
         "previewLabel": "Certificate Preview",
-        "title": "Certificate Title",
-        "details": "Replace this placeholder with your real certification summary.",
+        "title": "Computer Communications",
+        "details": "skills in fundamental computer networking concepts",
         "imageUrl": "",
         "pdfUrl": ""
       }
@@ -190,9 +190,8 @@ export const savedData = {
     "eyebrow": "06",
     "title": "Achievements",
     "items": [
-      "Add a competition win, published work, or major milestone here.",
-      "Use this slot for a leadership role, hackathon, or internship result.",
-      "Mention a measurable success or something you are proud of building."
+      "Built multiple real-world projects including e-commerce",
+      "Built an AI-powered crop advisory system for smart farming decisions."
     ]
   },
   "educationSection": {
@@ -200,12 +199,12 @@ export const savedData = {
     "title": "Education",
     "items": [
       {
-        "institution": "College / University Name",
-        "details": "Degree, branch, and graduation year"
+        "institution": "College / Sri Chaitanya Junior college",
+        "details": "Completed Intermediate (10+2) in MPC (Mathematics, Physics, Chemistry) with 65% in 2023"
       },
       {
-        "institution": "School / Intermediate",
-        "details": "Qualification, board, and year or percentage"
+        "institution": "School / Viswabharati High School",
+        "details": "Completed Secondary School (10th) with 90% in 2021"
       }
     ]
   },
@@ -215,23 +214,23 @@ export const savedData = {
     "items": [
       {
         "label": "Email",
-        "value": "your.email@example.com",
-        "url": ""
+        "value": "lokanandareddy9@gmail.com",
+        "url": "mailto:lokanandareddy9@gmail.com"
       },
       {
         "label": "Phone",
-        "value": "+91 00000 00000",
-        "url": ""
+        "value": "+91 8341775996",
+        "url": "tel:+918341775996"
       },
       {
         "label": "GitHub",
-        "value": "github.com/your-username",
-        "url": ""
+        "value": "lokananda9",
+        "url": "https://github.com/lokananda9"
       },
       {
         "label": "LinkedIn",
-        "value": "linkedin.com/in/your-name",
-        "url": ""
+        "value": "lokananda",
+        "url": "https://linkedin.com/in/lokananda"
       }
     ],
     "panelTitle": "Ready to personalize this section",
