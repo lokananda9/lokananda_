@@ -14,6 +14,22 @@ export default defineConfig({
       name: 'save-content',
       configureServer(server) {
         server.middlewares.use((req: any, res: any, next) => {
+          if (req.url === '/api/upload-asset' && req.method === 'POST') {
+            const fileName = req.headers['x-file-name'] || `upload-${Date.now()}`;
+            const publicPath = path.resolve(__dirname, 'public/uploads');
+            if (!fs.existsSync(publicPath)) {
+              fs.mkdirSync(publicPath, { recursive: true });
+            }
+            const filePath = path.resolve(publicPath, fileName);
+            const writeStream = fs.createWriteStream(filePath);
+            req.pipe(writeStream);
+            req.on('end', () => {
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ url: `/uploads/${fileName}` }));
+            });
+            return;
+          }
+
           if (req.url === '/api/save-content' && req.method === 'POST') {
             let body = '';
             req.on('data', (chunk: any) => { body += chunk.toString(); });

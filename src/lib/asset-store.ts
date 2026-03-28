@@ -57,6 +57,25 @@ export function isAssetReference(value: string) {
 }
 
 export async function saveAssetFile(file: File) {
+  // If running locally, save to the public folder through the Vite middleware
+  if (typeof window !== "undefined" && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    try {
+      const response = await window.fetch('/api/upload-asset', {
+        method: 'POST',
+        headers: {
+          'x-file-name': file.name
+        },
+        body: file
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data.url; // returns /uploads/filename.ext
+      }
+    } catch (e) {
+      console.error("Failed to upload to server, falling back to local storage", e);
+    }
+  }
+
   if (typeof window === "undefined" || !("indexedDB" in window)) {
     return fileToDataUrl(file);
   }
