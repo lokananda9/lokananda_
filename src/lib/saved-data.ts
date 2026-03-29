@@ -152,39 +152,39 @@ export const savedData = {
         "previewLabel": "Certificate Preview",
         "title": "Prompt Engineering",
         "details": "Prompt engineering in Large Language Models (LLMs) like ChatGPT, Gemini, and Claude.",
-        "imageUrl": "",
-        "pdfUrl": ""
+        "imageUrl": "/uploads/1774766720301-Screenshot-2026-03-28-021756.png",
+        "pdfUrl": "/uploads/1774766841955-1-1be21bbb-9a34-4f70-af9f-0173548b3b48.pdf"
       },
       {
         "previewLabel": "Certificate Preview",
         "title": "Responsive Web Design",
         "details": "Responsive web design (RWD) uses HTML, CSS, and some JavaScript to create web pages.",
-        "imageUrl": "",
-        "pdfUrl": ""
+        "imageUrl": "/uploads/1774766930226-Screenshot-2026-03-28-132345.png",
+        "pdfUrl": "/uploads/1774767004227-Screenshot-2026-01-03-145305.pdf"
       },
       {
         "previewLabel": "Certificate Preview",
         "title": "Computer Communications",
         "details": "skills in fundamental computer networking concepts",
-        "imageUrl": "",
-        "pdfUrl": ""
+        "imageUrl": "/uploads/1774766943517-Screenshot-2026-03-28-022731.png",
+        "pdfUrl": "/uploads/1774767107500-Coursera-C7VBZRJJMI9F.pdf"
       }
     ]
   },
   "resumeSection": {
     "eyebrow": "05",
     "title": "Resume",
-    "summary": "Use this section for a quick resume summary covering your experience, education, and strongest technical skills.",
+    "summary": "",
     "highlights": [
-      "One line for your strongest domain or specialization",
-      "One line for your key tools, frameworks, or technologies",
-      "One line for availability, internships, or career direction"
+      "Full Stack Developer specializing in interactive web applications, AI-driven systems, and system visualization tools",
+      "Skilled in React, Node.js, TypeScript, Python, Machine Learning, and modern UI frameworks like Tailwind CSS",
+      "Actively seeking internships and real-world opportunities to build scalable, impactful tech solutions"
     ],
     "viewLabel": "View Resume",
     "downloadLabel": "Download PDF",
     "previewLabel": "Resume Preview",
-    "previewImageUrl": "",
-    "pdfUrl": ""
+    "previewImageUrl": "/uploads/1774766966256-Screenshot-2026-03-28-155131.png",
+    "pdfUrl": "/uploads/1774769241356-LokanandaCV.pdf"
   },
   "achievementsSection": {
     "eyebrow": "06",
