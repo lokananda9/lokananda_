@@ -6,7 +6,7 @@ export const savedData = {
     },
     {
       "id": "skills",
-      "label": "Skill"
+      "label": "Skills"
     },
     {
       "id": "projects",
@@ -35,14 +35,14 @@ export const savedData = {
   ],
   "hero": {
     "badge": "Portfolio Layout",
-    "name": "Lokanandaiefiwbgviigvrbg",
+    "name": "Lokananda",
     "title": "Machine Learning Engineer | Full Stack Developer | Designer",
     "about": "I’m Lokananda, a Machine Learning–focused developer building intelligent, real-world applications. I also work with full stack technologies to create seamless, interactive user experiences, combining ML with modern web development while seeking internships and collaborations",
     "primaryCta": "View Resume",
     "secondaryCta": "Contact Me",
     "photoTitle": "Professional Picture",
     "photoDescription": "Replace this polished placeholder with your portfolio photo.",
-    "photoUrl": "",
+    "photoUrl": "/uploads/1774766057235-ChatGPT_Image_Mar_27__2026__07_00_29_PM-removebg-preview--1-.png",
     "quickIntroLabel": "Quick Intro",
     "quickIntroText": "About me, skills, projects, certificates, and more",
     "highlights": [
@@ -103,7 +103,7 @@ export const savedData = {
           "Tailwind CSS",
           "Vite"
         ],
-        "imageUrl": "",
+        "imageUrl": "/uploads/1774766178245-Screenshot-2026-03-27-184239.png",
         "liveUrl": "https://chaitanyasarees.vercel.app/",
         "githubUrl": "https://github.com/lokananda9/chaitanyasarees"
       },
@@ -120,7 +120,7 @@ export const savedData = {
           "Node.js",
           "REST API"
         ],
-        "imageUrl": "",
+        "imageUrl": "/uploads/1774766199554-Screenshot-2026-03-28-014634.png",
         "liveUrl": "https://preview--memory-watch-os-view.lovable.app/",
         "githubUrl": "https://github.com/lokananda9/Real-Time-Memory-Allocation-Tracker"
       },
@@ -137,7 +137,7 @@ export const savedData = {
           "React",
           "Vite"
         ],
-        "imageUrl": "",
+        "imageUrl": "/uploads/1774766231255-Screenshot-2026-03-28-015739.png",
         "liveUrl": "https://lovable.dev/projects/cbf7721d-d3a4-46e2-9635-22c9722e5c2b",
         "githubUrl": "https://github.com/lokananda9/earth-harmony-advisor"
       }
